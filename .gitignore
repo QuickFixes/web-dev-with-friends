@@ -1,0 +1,4 @@
+# backups and Vim swapfiles
+*.sw?
+*~
+.DS_Store
