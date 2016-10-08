@@ -5,9 +5,11 @@
 ::  Date:    2. October 2016
 
 setlocal
-set VAGRANT_BOX=https://tf.cchmc.org/external/ern6xv/bioreactor-jessie.box
-set BOX_NAME=bioreactor-jessie
+set BOX_NAME=webdev-jessie
+set VAGRANT_BOX=http://homepages.uc.edu/~ernstki/${BOX_NAME}.box
 
+:: FIXME: Remember starting directory and restore it when script finishes
+cd %0\..\vm
 cls
 echo VM IMAGE PREPARATION
 echo --------------------

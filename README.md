@@ -90,6 +90,61 @@ On GNU/Linux, you'll want to _at a minimum_ install the `git-core` or `git`
 [package] from your OS's package manager. [`git-cola`][gitcola] or `gitg`
 would be good choices if you'd like a GUI.
 
+## Connecting to the running VM
+
+### Authentication
+
+You will connect to the running virtual machine over SSH as the user
+`vagrant`. This user is in the `sudoers` file (by way of being a
+member of the group `sudo`), which means it can become the superuser (`root`)
+with no password.
+
+The Vagrant user's default password is `vagrant`.
+
+If you have any problems with authentication, please refer to 
+[`vm/TECHNICAL.md`](vm/TECHNICAL.md).
+
+### Connecting to the VM over SSH
+
+In order to connect with the VM over SSH, normally you would just type
+`vagrant ssh` inside the `vm` subdirectory of this repository, wherever you
+originally cloned this repository.
+
+An error message to the effect of "Run \`vagrant init\` to create a new
+Vagrant environment"
+
+![You forgot to `cd vm` first.][vagrantwrong]
+
+means that you forgot to `cd vm` before running `vagrant up` or `vagrant ssh`.
+The `vagrant` command expects to be run in the same working directory as where
+the [`Vagrantfile`](vm/Vagrantfile) lives.
+
+![That's better.][vagrantright]
+
+On Windows, you need to run this command inside of a Bash (or [Cygwin][])
+shell, which the GitHub GUI for Windows provides, as long as you correctly
+followed the instructions above.
+
+You'll find additional advice about connecting over SSH (including using SFTP
+programs like [Cyberduck][]) in [`vm/TECHNICAL.md`](vm/TECHNICAL.md).
+
+### Forwarded ports
+
+The [`Vagrantfile`](vm/Vagrantfile) will automatically create the following
+forwarded ports for you. 
+
+| Guest (VM) port forwards to...  | Host port #      | Notes                    |
+| ------------------------------- | ---------------- | ------------------------ |
+| 22                              | 9922             | Secure Shell (see below) |
+| 80                              | [9980][lh9980]   | Apache HTTP server       |
+| 5000                            | [55000][lh55000] | Python / Flask app       |
+
+It was after some deliberation that I decided to stick with 55000 for the
+Flask server, so that it wouldn't interfere with the default configuration of
+a local Flask server you might be experimenting with. Just make a bookmark to
+<http://localhost:55000> and remember that it goes with the Flask app running
+on the VM.
+
 ## Frequently-asked Questions
 
 ### What about Windows? ###
@@ -185,3 +240,8 @@ would be good choices if you'd like a GUI.
 [yaml]: https://en.m.wikipedia.org/wiki/YAML
 [ansible]: https://docs.ansible.com/
 [basebox]: https://www.vagrantup.com/docs/boxes/base.html
+[cygwin]: http://cygwin.org/
+[cyberduck]: https://cyberduck.io/
+[vagrantwrong]: img/vagrant_up_in_wrong_directory.png
+[vagrantright]: img/vagrant_up_in_right_directory.png
+[sourcetree]: https://www.sourcetreeapp.com/

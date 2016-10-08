@@ -8,9 +8,8 @@
 #set -x
 ME=$( basename "$BASH_SOURCE" )
 MYDIR=$( cd "$(dirname "$BASH_SOURCE")" && pwd )
-# FIXME: nothing actually at this URL yet
-VAGRANT_BOX=${VAGRANT_BOX:-https://tf.cchmc.org/external/ern6xv/bioreactor-jessie.box}
-BOX_NAME=bioreactor-jessie
+BOX_NAME=webdev-jessie
+VAGRANT_BOX=${VAGRANT_BOX:-http://homepages.uc.edu/~ernstki/${BOX_NAME}.box}
 
 quietly() {
     $* &>/dev/null
@@ -29,7 +28,7 @@ croak() {
 # Change into the directory where this script lives, in case it was run from
 # a relative pathname (or a pathname starting from '/'):
 trap 'quietly popd' 0 1 2 15
-quietly pushd "$MYDIR"
+quietly pushd "$MYDIR/vm"
 
 clear
 echo "VM IMAGE PREPARATION"

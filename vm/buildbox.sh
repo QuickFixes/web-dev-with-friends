@@ -8,5 +8,5 @@ if [ "$FORCE" = "1" -o "${1:0:2}" = "-f" -o "${1:0:3}" = "--f" ]; then
     EXTRA_ARGS="--force"
 fi
 
-veewee vbox build $EXTRA_ARGS bioreactor-jessie
-veewee vbox export bioreactor-jessie
+veewee vbox build $EXTRA_ARGS webdev-jessie
+veewee vbox export webdev-jessie

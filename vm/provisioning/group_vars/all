@@ -1,7 +1,7 @@
 ---
 # Repositories to build the web applications from and their destinations
-origin: git@github.uc.edu:Bioreactor
-vm_repo: bioreactor-vm
+origin: git@github.com:QuickFixes
+vm_repo: web-dev-with-friends
 
 # The name of the target user (in a Vagrant environment, it's pretty obvious)
 target_user: vagrant
@@ -10,17 +10,16 @@ target_user: vagrant
 home: "/home/{{ target_user }}"
 
 mysql_root_pass: AllYourDatabaseAreBelongToUs
-mysql_slurm_pass: ToEverythingSlurmSlurmSlurm
 
 # A list of sub-projects and where to clone them
 projects:
-  - { repo: 'bioreactor', dest: '/var/www/bioreactor', a2conf: '990-bioreactor.conf' }
+  - { repo: 'qf1-dancemoves', dest: '/var/www/dancemoves', a2conf: '990-dancemoves.conf' }
 
 # The name of the RSA public/private key pair for deploying the main project
-project_deploy_key: id_rsa-bioreactor-deploy
+project_deploy_key: id_rsa-webdev-vm-deploy
 
 # The name of the keypair for pulling the VM repository (for provisioning)
-vm_repo_deploy_key: id_rsa-bioreactor-vm-deploy
+vm_repo_deploy_key: id_rsa-webdev-vm-deploy
 
 install_these_packages:
   - acl      # can't believe this isn't included in the base OS install

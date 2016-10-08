@@ -13,7 +13,7 @@ chmod 0600 /home/vagrant/.ssh/authorized_keys
 chown -R vagrant:vagrant /home/vagrant/.ssh
 
 # Customize the message of the day
-echo 'This is the Bioreactor development VM' > /var/run/motd
+echo 'This is the Happy Dev Team Magical Development VM' > /var/run/motd
 
 # Install NFS client
 apt-get -y install nfs-common

@@ -15,9 +15,9 @@ MYDIR=$( cd "$(dirname "$BASH_SOURCE")" && pwd )
 RUNPLAY="ansible-playbook -c local -i127.0.0.1,"
 
 # Bail out if this script isn't run on a host matching this name
-VM_HOSTNAME=bioreactor-jessie
-PROJECT_NAME=Bioreactor
-VM_REPO_NAME=bioreactor-vm
+VM_HOSTNAME=webdev-jessie
+PROJECT_NAME=QuickFixes
+VM_REPO_NAME=web-dev-with-friends
 
 carp() {
     echo "$*" >&2

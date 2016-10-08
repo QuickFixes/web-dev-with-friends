@@ -1,8 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-$ORIGIN    = "git@github.uc.edu:Bioreactor"
-$REPO_NAME = "bioreactor-vm"
+$ORIGIN    = "git@github.com:QuickFixes"
+$REPO_NAME = "web-dev-with-friends"
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -15,7 +15,7 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "bioreactor-jessie"
+  config.vm.box = "webdev-jessie"
   config.vm.define :debian_jessie
 
   # Disable automatic box update checking. If you disable this, then
@@ -69,9 +69,9 @@ Vagrant.configure(2) do |config|
   # GitLab repo and running the 'self-provision.sh' script on the VM.
   files = {
     # This seems somewhat fruitless because of the new hashed host keys
-    'provisioning/files/origin_host_key'                 => '~/.ssh/known_hosts',
-    'provisioning/files/id_rsa-bioreactor-vm-deploy'     => '~/.ssh/id_rsa',
-    'provisioning/files/id_rsa-bioreactor-vm-deploy.pub' => '~/.ssh/id_rsa.pub'
+    'provisioning/files/origin_host_keys'            => '~/.ssh/known_hosts',
+    'provisioning/files/id_rsa-webdev-vm-deploy'     => '~/.ssh/id_rsa',
+    'provisioning/files/id_rsa-webdev-vm-deploy.pub' => '~/.ssh/id_rsa.pub'
   }
   files.each { |s,d| config.vm.provision "file", source: s, destination: d }
 
@@ -95,6 +95,7 @@ Vagrant.configure(2) do |config|
     fi
 
     echo "==> Running provisioning playbooks with Ansible <=="
+    cd vm
     ./bin/self-provision.sh
   SHELL
 

@@ -1,8 +1,8 @@
-# VM development environment for Bioreactor
+# A shared VM development environment for your team
 
-This directory contains configuration files which may be used to build
-a development / test server environment for the [Bioreactor][] analysis
-application.
+This directory contains configuration files which may be used to generate
+a virtual machine development / test server environment for a team of several
+users, so you can all build on the same foundation.
 
 The VM image is based on Debian 8.5.0 (codename "jessie"), using the "netinst"
 ISO found here:
@@ -13,7 +13,8 @@ ISO found here:
 
 1. [Vagrant][] - to automatically configure and provision the VM
 2. [PuTTY][] - on Windows, to connect to the VM over Secure Shell
-3. [veewee][] - if and _only_ if you want to re-build the base box from scratch
+3. [veewee][] - if and _only_ if you want to re-build the base box from
+   scratch
 
 ## Installation
 
@@ -23,15 +24,10 @@ repository
 ...which basically just performs these two steps for you:
 
 ```bash
-BASEBOX=https://tf.cchmc.org/external/ern6xv/bioreactor-jessie.box
-vagrant box add bioreactor $BASEBOX
+BASEBOX=http://homepages.uc.edu/~ernstki/webdev-jessie.box
+vagrant box add webdev-jessie $BASEBOX
 vagrant up
 ```
-
-As a backup, if for whatever reason the link to the `.box` file above becomes
-unavailable, you might try this Google shared link as an alternative.
-
-    https://FIXME
 
 Failing that, you can see the
 "[Re-building the base box](#re-building-the-base-box)" section below for
@@ -93,63 +89,6 @@ a local Flask server you might be experimenting with. Just make a bookmark to
 <http://localhost:55000> and remember that it goes with the Flask app running
 on the VM.
 
-## Installing Slurm on the VM
-
-[Slurm][] is an open source workload manager (sometimes called a
-"[job scheduler][jobschedwiki]," "batch scheduler," "job manager," or
-something along those lines) which is similar to the Platform LSF scheduler
-used in the Children's research division.
-
-The process is not yet automatic (_i.e._, it is not performed as part of the
-initial `vagrant up` provisioning), but there exists an Ansible playbook
-in this repository with which you can easily install the necessary services.
-This gives you a "mini-cluster" on the VM to which you can send batch jobs.
-
-After the initial provisioning process is complete, SSH into the VM and run
-the playbook like this:
-
-```bash
-# these steps performed while ssh'd into the VM as the 'vagrant' user
-cd ~/devel/bioreactor-vm
-bin/play.sh provisioning/set_up_slurm.yml
-```
-
-and hopefully, on a good day, that's it!
-
-**SECURITY NOTE**: This will set up a MySQL server and a `slurm` database user
-where both passwords can easily be read from the Ansible `group_vars/all`
-config file in this repository. If deploying to a "production" server with
-this same playbook, you'll need to choose real passwords. The process for
-MySQL 5.5 is documented [here][mysqlpass].
-
-### Testing to make sure it worked
-
-You can test that the queue manager works like this (as a non-privileged
-user):
-
-```bash
-cd # make sure you're in a writable directory like $HOME
-sbatch <<<'#!/bin/bash
-#SBATCH -J "First test job"
-ls -lR'
-
-# then, to make sure it worked
-sacct -c
-```
-
-and the results should look something like this:
-```
-       JobID    UID    JobName  Partition   NNodes        NodeList      State                 End
------------- ------ ---------- ---------- -------- --------------- ---------- -------------------
-2              1000 First tes+      debug        1        bioreactor  COMPLETED 2016-07-13T21:57:53
-```
-
-### See also
-
-* "[Installing Slurm for testing][slurmwiki]" article on the
-  [Bioreactor wiki][bioreactorwiki] - _for the manual steps necessary to accomplish
-  what the playbook already does for you_
-
 ## Re-synchronizing with upstream changes
 
 The `vagrant up` step above will run a Vagrant "shell provisioner" (basically
@@ -157,15 +96,15 @@ an inline shell script within the `Vagrantfile`) that will perform roughly
 these steps:
 
 * install read-only [deployment keys][ghdeploykeys] into the VM so that the
-  `vagrant` user can clone the Bioreactor repositories
-* clone the `bioreactor-vm` repository (where this `README` lives) into
+  `vagrant` user can clone any necessary (non-public) repositories
+* clone the `web-dev-with-friends` repository (where this document lives) into
   `~vagrant/devel` 
 * invoke a shell script on the VM that will run a series of Ansible
   "playbooks", a sequence of tasks to automate sysadmin tasks such as
   installing packages and properly configuring the Apache server
 
 If any upstream changes are made to these "playbooks," you may `git pull`
-inside the `~vagrant/devel/bioreactor-vm` directory and then run
+inside the `~vagrant/devel/web-dev-with-friends` directory and then run
 `./bin/self-provision.sh` to repeat the provisioning steps. The Ansible
 provisioning process is [idempotent][], which means that you can re-run the
 playbooks over and over and they shouldn't affect the state of the VM if the
@@ -173,8 +112,8 @@ required tasks have already been performed—only required steps that weren't
 (successfully) completed before will be executed.
 
 That being said, it wouldn't hurt to make sure that any uncommited changes to
-the Bioreactor codebase have been committed and pushed (perhaps to a `dev` tree
-in a private fork), just in case.
+any other project codebase(s) have been committed and pushed (perhaps to
+a `dev` tree in a private fork), just in case.
 
 You can also just run `git pull` followed by `vagrant provision` in the
 directory on your _host OS_ where you originally cloned this repository.
@@ -182,20 +121,16 @@ directory on your _host OS_ where you originally cloned this repository.
 ## Implementation details
 
 ### Where does the Vagrant "base box" comes from, anyhow?
-The `bioreactor-jessie.box` file currently used by the setup script is stored
-on `tf.cchmc.org` at this location:
+The `webdev-jessie.box` file currently used by the setup script is stored
+on UCFileSpace at this location:
 
-    https://tf.cchmc.org/external/ern6xv/bioreactor-jessie.box
-
-As a backup, there's also a copy stored in Google Drive:
-
-    https://FIXME
+    http://homepages.uc.edu/~ernstki/webdev-jessie.box
 
 If for some odd reason, you have already downloaded the base box you can
 point the script at the existing `.box` file like so:
 
 ```bash
-VAGRANT_BOX=~/Downloads/bioreactor-jessie.box ./setup.sh
+VAGRANT_BOX=~/Downloads/webdev-jessie.box ./setup.sh
 ```
 
 or by altering the value of `VAGRANT_BOX` at the top of the script.
@@ -238,7 +173,7 @@ gem install veewee
 There's a bug in veewee 0.4.5.1 that causes the verification of a SHA256 sum
 to fail, and it might not be fixed when you read this document. You can either
 comment out the line that starts with `:iso_sha256` in
-`definitions/bioreactor-jessie/definition.rb` or fix the `iso.rb` source file
+`definitions/webdev-jessie/definition.rb` or fix the `iso.rb` source file
 contained in this inexplicably long path under
 `~/.rbenv/versions/<RUBY_VERSION>`
 
@@ -257,14 +192,13 @@ properly.
 
 ```bash
 # run inside the repo's base directory; setup should be fully-automatic
-veewee vbox build bioreactor-jessie
+veewee vbox build webdev-jessie
 
 # then package the running VM into a Vagrant '.box' file, which you
 # can then upload somewhere
-veewee vbox export bioreactor-jessie
+veewee vbox export webdev-jessie
 ```
 
-[bioreactor]: https://github.uc.edu/Bioreactor/bioreactor
 [veewee]: https://github.com/jedi4ever/veewee
 [vagrant]: https://www.vagrantup.com/
 [putty]: http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html
@@ -275,11 +209,6 @@ veewee vbox export bioreactor-jessie
 [ansible]: https://docs.ansible.com/
 [ghdeploykeys]: https://developer.github.com/guides/managing-deploy-keys/#deploy-keys
 [idempotent]: https://en.wikipedia.org/wiki/Idempotence 
-[slurm]: http://slurm.schedmd.com/slurm.html
-[slurmacct]: http://slurm.schedmd.com/accounting.html
-[jobschedwiki]: https://en.wikipedia.org/wiki/Job_scheduler
-[slurmwiki]: https://FIXME/Bioreactor/bioreactor/wiki/Installing-Slurm-for-testing
-[bioreactorwiki]: https://github.uc.edu/Bioreactor/bioreactor/wiki
 [mysqlpass]: https://dev.mysql.com/doc/refman/5.5/en/set-password.html
 [cyberduck]: https://cyberduck.io/
 [lh9980]: http://localhost:9980

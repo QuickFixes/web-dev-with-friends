@@ -11,12 +11,12 @@ ME=$( basename "$BASH_SOURCE" )
 MYDIR=$( cd "$(dirname "$BASH_SOURCE")" && pwd )
 
 # Bail out if this script isn't run on a host matching this name
-VM_HOSTNAME=bioreactor-jessie
-REPO_NAME=bioreactor-vm
-ORIGIN=git@github.uc.edu:Bioreactor
+VM_HOSTNAME=webdev-jessie
+REPO_NAME=web-dev-with-friends
+ORIGIN=git@github.com:QuickFixes
 HUBORLAB=Hub
-DEPLOY_KEY=id_rsa-bioreactor-vm-deploy
-KEY_SETTINGS_URL=https://github.uc.edu/settings/keys
+DEPLOY_KEY=id_rsa-webdev-vm-deploy
+KEY_SETTINGS_URL=https://github.com/settings/keys
 
 quietly() {
     $* &>/dev/null
