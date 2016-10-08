@@ -203,8 +203,9 @@ on the VM.
 > machine development environment for your team—beginning from the distro's
 > installation ISO.
 >
-> This could come in handy if the Vagrant `.box` image became corrupted, or
-> was otherwise lost through some data storage disaster.
+> This could come in handy if the Vagrant `.box` image (that you spent hours of
+your life getting _just_ right) became corrupted, or > was otherwise lost
+through some data storage disaster.
 >
 > There is no requirement for anyone on your team to perform the steps
 > discussed in [`vm/TECHNICAL.md`](vm/TECHNICAL.md) to rebuild the base box,
