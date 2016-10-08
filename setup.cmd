@@ -6,7 +6,7 @@
 
 setlocal
 set BOX_NAME=webdev-jessie
-set VAGRANT_BOX=http://homepages.uc.edu/~ernstki/${BOX_NAME}.box
+set VAGRANT_BOX=http://homepages.uc.edu/~ernstki/%BOX_NAME%.box
 
 :: FIXME: Remember starting directory and restore it when script finishes
 cd %0\..\vm
