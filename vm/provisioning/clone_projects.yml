@@ -1,0 +1,35 @@
+---
+- hosts: all
+  become: yes
+  become_user: vagrant
+
+  tasks:
+    - name: Clone Git repos for the required projects
+      with_items: "{{ projects }}"
+      git: repo={{ origin }}/{{ item.repo }}.git dest={{ item.dest }}
+           key_file={{home}}/.ssh/{{ project_deploy_key }}
+           accept_hostkey=yes 
+           #force=yes
+
+    #
+    #  Composer is a PHP dependency manager; we shouldn't need it
+    # 
+
+    #- name: Make sure ~/local/bin exists
+    #  file:
+    #    path: "{{ home }}/local/bin"
+    #    state: directory
+    #    owner: "{{ target_user }}"
+    #    group: "{{ target_user }}"
+
+    #- name: Install Composer into $HOME/local/bin
+    #  copy:
+    #    src: files/composer
+    #    mode: 0755
+    #    dest: "{{ home }}/local/bin"
+
+    #- name: Use Composer to update project dependencies
+    #  with_items: "{{ projects }}"
+    #  command: "{{ home }}/local/bin/composer --no-ansi update chdir={{ item.dest }}"
+
+# vim: sw=2 ts=2 expandtab

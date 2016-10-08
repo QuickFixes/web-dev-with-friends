@@ -1,0 +1,152 @@
+# Functions to help us manage paths, and path-like variables like
+# $PROMPT_COMMAND
+#
+# $1 - internal field separator, e.g., ':' or ';' (required)
+#      NB: don't forget to escape ';', otherwise strange things happen
+# $2 - the item to remove from the delimited list
+# $3 - the list (PATH-like env var) to operate on; defaults to $PATH
+#
+# Source: http://www.linuxfromscratch.org/blfs/view/7.6/postlfs/profile.html
+listremove () {
+    local IFS=$1
+    local newlist
+    local listitem
+    local listvar=${3:-PATH}
+    for listitem in ${!listvar}; do
+        if [ "$listitem" != "$2" ]; then
+          newlist=${newlist:+${newlist}${1}}$listitem
+        fi
+    done
+    export $listvar="$newlist"
+}
+
+pathprepend () {
+    listremove ':' $1 $2
+    local PATHVARIABLE=${2:-PATH}
+    export $PATHVARIABLE="$1${!PATHVARIABLE:+:${!PATHVARIABLE}}"
+}
+
+pathappend () {
+    listremove ':' $1 $2
+    local PATHVARIABLE=${2:-PATH}
+    export $PATHVARIABLE="${!PATHVARIABLE:+${!PATHVARIABLE}:}$1"
+}
+
+promptcmdprepend() {
+    # Oh my, but strange things to happen if you forget to escape the ';'
+    listremove ';' $1 PROMPT_COMMAND
+    export PROMPT_COMMAND="$1${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
+}
+
+promptcmdappend() {
+    # Oh my, but strange things to happen if you forget to escape the ';'
+    listremove ';' $1 PROMPT_COMMAND
+    export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;}$1"
+}
+
+# Reattach a previously detached tmux session
+# Author: Kevin Ernst
+remux() { 
+    if [ $# -gt 0 ]; then
+        case $1 in 
+            [0-9]*)
+                if tmux has-session -t $1; then
+                    tmux attach-session -d -t $1;
+                else
+                    echo "ACK! Can't 'remux $1' because there there's no such session $1" 1>&2;
+                    echo;
+                    tmux ls;
+                    return 1;
+                fi
+            ;;
+            l*)
+                tmux ls
+            ;;
+            *)
+                tmux $*
+            ;;
+        esac;
+        return;
+    fi;
+    sessions=$( tmux ls | wc -l );
+    if [ $sessions -gt 0 ]; then
+        if [ $sessions -gt 1 ]; then
+            echo "ACK! Can't remux because there are multiple disconnected sessions" 1>&2;
+            echo "     Try 'remux <session#>' from the list below." 1>&2;
+            echo;
+            tmux ls;
+            return 1;
+        fi;
+        tmux $* attach-session -d -t 0;
+    else
+        tmux $*;
+    fi
+} # remux()
+
+##########################################################################
+#                  Shortcut for awk '{ print $x }'                       #
+##########################################################################
+#
+#  Inspiration:  http://serverfault.com/a/5551 (but basically rewritten)
+#  Source:       https://gist.github.com/ernstki/68c7b7da28d9a8c9ced7
+#  Mnemonic:     "Field AWK" (also an expression of extreme frustration)
+#  Bugs:         There is almost 0% chance that 'fawk' correctly accounts
+#                for spaces in pathnames right now.
+#
+fawk() {
+    USAGE="
+usage:  fawk [<awk_args>] <field_no> [<filename>]
+        Ex: getent passwd | grep andy | fawk -F: 5
+"
+    if [ $# -eq 0 ]; then
+        echo -e "$USAGE" >&2
+        return 1
+        #exit 1 # whoops! that would quit the shell!
+    fi
+
+    file=''
+    # Store off the *last* argument given on the command line
+    last="${@:(-1)}"
+    if [ $# -gt 1 ]; then
+        # Source:
+        # http://www.cyberciti.biz/faq/linux-unix-bsd-apple-osx-bash-get-last-argument/
+        rest=( ${@:1:$(( $# - 1 ))} )
+    else
+        rest=() # just to be sure there's no $rest in the environment
+    fi
+
+    # If the last argument is a file, the argument before it needs to be a
+    # number.
+    if [ -f "$last" -a -r "$last" ]; then
+        # Test to see if we still have enough arguments:
+        if [ $# -lt 2 ]; then
+            echo "FAWK! Insufficient arguments (need 2)." >&2
+            echo -e "$USAGE" >&2
+            return 1
+        fi
+        file="$last"
+        # New $last is the final element of $rest
+        last="${rest[*]:(-1)}"
+        # Pop last element of $rest (using Bash index operator)
+        rest=( ${rest[*]:0:$(( ${#rest[*]} - 1 ))} )
+        if ! [ "$last" -eq "$last" ] &>/dev/null; then
+            echo -n "FAWK! When giving a filename, the second-to-last " >&2
+            echo    "argument (AWK field) must be numeric." >&2
+            echo -e "$USAGE" >&2;
+            return 1
+        fi
+    # bail if the *last* argument isn't a number (source:
+    # http://stackoverflow.com/a/808740)
+    elif ! [ "$last" -eq "$last" ] &>/dev/null; then
+        echo -n "FAWK! Unless you give a filename, the last argument (AWK " >&2
+        echo    "field) must be numeric." >&2
+        echo -e "$USAGE" >&2;
+        return 1
+    fi
+
+    # $file might be the empty string; in that case, AWK will wait for stdin
+    awk ${rest[*]} "{ print  \$$last }" $file
+} # fawk()
+
+# vim: ft=sh sw=4 ts=4 expandtab
+

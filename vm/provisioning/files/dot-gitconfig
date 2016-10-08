@@ -1,0 +1,10 @@
+[core]
+#editor = /usr/bin/nano
+
+[alias]
+vimdiff = difftool -y -t vimdiff
+lol = log --graph --all --decorate --oneline
+conflicts = diff --name-only --diff-filter=U
+
+[color]
+ui = true

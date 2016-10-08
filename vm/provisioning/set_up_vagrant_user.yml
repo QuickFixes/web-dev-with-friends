@@ -1,0 +1,156 @@
+- hosts: all
+  become: yes
+  become_user: root
+
+  tasks:
+    - name: Create the target user
+      user:
+        state: present
+        name: "{{ target_user }}"
+        # Default password is 'vagrant'; what you see here is a hashed version
+        password: kugrmh0/HYhBM
+        # FIXME: Do we *really* want the 'vagrant' user to be able to use
+        # 'sudo' if this script is run on somebody's personal machine?
+        groups: "www-data,sudo,adm"
+        createhome: yes
+
+    - name: "See if 'vboxsf' group exists"
+      group: name=vboxsf state=present
+      ignore_errors: yes
+      register: vboxsf_exists
+
+    - name: "Add target user to 'vboxsf' group if it exists"
+      user:
+        name: "{{ target_user }}"
+        # 'append: yes' is kind of important to prevent clobbering existing
+        # group memberships
+        append: yes
+        groups: vboxsf
+      when: vboxsf_exists|success
+
+    - name: Create ~/.ssh and set appropriate permissions
+      file:
+        path: "{{ home }}/.ssh"
+        state: directory
+        mode: 0700
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+
+    - name: "Create some useful directories in the target user's home"
+      file:
+        path: "{{ home }}/{{ item }}"
+        state: directory
+        mode: 0755
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+      with_items:
+        [ '.ssh', 'devel', 'bin', '.local/share' ]
+
+    - name: "Clone some useful GitHub repos (composure, fasd) to ~/devel"
+      with_items: "{{ clone_these_github_repos }}"
+      become: yes
+      become_user: "{{ target_user }}"
+      git:
+        repo: https://github.com/{{ item.user }}/{{ item.repo }}.git
+        dest: "{{ home }}/devel/{{ item.repo }}"
+        update: no
+
+    - name: "Run installers for repos that aren't already installed"
+      with_items: "{{ clone_these_github_repos }}"
+      become: yes
+      become_user: "{{ target_user }}"
+      shell: "{{ item.install_cmd }}"
+      args:
+        chdir: "{{ home }}/devel/{{ item.repo }}"
+        creates: "{{ item.creates }}"
+
+    - name: Copy project deploy-only private key(s)
+      with_items: [ '{{ project_deploy_key }}', '{{ vm_repo_deploy_key }}' ]
+      copy:
+        src: "files/{{ item }}"
+        dest: "{{ home }}/.ssh/"
+        mode: 0600
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+
+    - name: Copy GitLab deploy public key
+      with_items: [ '{{ project_deploy_key }}', '{{ vm_repo_deploy_key }}' ]
+      copy:
+        src: "files/{{ item }}.pub"
+        dest: "{{ home }}/.ssh/"
+        mode: 0644
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+
+    - name: Check to see if ~/.ssh/id_rsa exists
+      file:
+        path: "{{ home }}/.ssh/id_rsa"
+        state: file
+      ignore_errors: yes
+      register: priv_key_exists
+
+    - name: "If ~/.ssh/id_rsa doesn't exist, use deploy key for now"
+      when: priv_key_exists|failed
+      with_items: [ "", ".pub" ]
+      copy:
+        src: "files/{{ project_deploy_key }}{{ item }}"
+        dest: "{{ home }}/.ssh/id_rsa{{ item }}"
+        mode: 0600
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+
+    # TODO: Probably want to use Ansible's 'lineinfile' for this
+    #- name: Copy GitLab host key
+    #  copy:
+    #    src: "files/
+
+    - name: Copy over a default .profile (creating a backup)
+      copy:
+        src: "files/dot-profile"
+        dest: "{{ home }}/.profile"
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        backup: yes
+
+    - name: Copy over Bash dotfiles (creating backups)
+      copy:
+        src: "files/dot-bash{{ item }}"
+        dest: "{{ home }}/.bash{{ item }}"
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        backup: yes
+      with_items: [ 'rc', '_aliases', '_functions' ]
+
+    - name: Install a default tmux configuration
+      copy:
+        src: files/dot-tmux.conf
+        dest: "{{ home }}/.tmux.conf"
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        backup: yes
+        
+    - name: Install essential .gitconfig 
+      copy:
+        src: files/dot-gitconfig
+        dest: "{{ home }}/.gitconfig"
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        force: no
+
+    - name: Install essential .inputrc (see comments within)
+      copy:
+        src: files/dot-inputrc
+        dest: "{{ home }}/.inputrc"
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        force: no
+
+    - name: Install .pystartup for history control in interactive modes
+      copy:
+        src: files/dot-pystartup
+        dest: "{{ home }}/.pystartup"
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        force: no
+
+# vim: sw=2 ts=2 expandtab

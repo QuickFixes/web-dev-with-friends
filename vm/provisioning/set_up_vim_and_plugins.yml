@@ -1,0 +1,45 @@
+---
+- hosts: all
+  tasks:
+    - name: Install a minimal .vimrc
+      copy:
+        force: yes
+        backup: yes
+        src: files/dot-vimrc
+        dest: "{{ home }}/.vimrc"
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+
+    - name: "Create Vim 'bundle' and 'autoload' directories"
+      with_items: [ 'autoload', 'bundle' ]
+      file:
+        state: directory
+        path: "{{ home }}/.vim/{{ item }}"
+
+    #- name: "Install Tim Pope's 'pathogen' Vim bundle manager"
+    #  copy:
+    #    force: yes
+    #    src: files/vim-autoload/pathogen.vim
+    #    dest: "{{ home }}/.vim/autoload/pathogen.vim"
+    #    owner: "{{ target_user }}"
+    #    group: "{{ target_user }}"
+
+    - name: "Check to see if Tim Pope's 'pathogen' bundle manager is installed"
+      file:
+        path: "{{ home }}/.vim/autoload/pathogen.vim"
+      register: have_pathogen
+      ignore_errors: yes
+
+    - name: "Install 'pathogen' bundle manager"
+      when: have_pathogen|failed
+      get_url:
+        url: https://tpo.pe/pathogen.vim
+        dest: "{{ home }}/.vim/autoload/pathogen.vim"
+
+    - name: "Install a good default set of Vim plugins"
+      with_items: "{{ install_these_vim_plugins }}"
+      git: repo=https://github.com/{{ item.user }}/{{ item.repo }}.git
+           dest={{ home }}/.vim/bundle/{{ item.repo }}
+           accept_hostkey=yes 
+
+# vim: sw=2 ts=2 expandtab

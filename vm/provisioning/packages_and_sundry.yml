@@ -1,0 +1,52 @@
+---
+- hosts: all
+  # I find 'become' dreadfully un-descriptive; previously this was 'sudo'
+  become: yes
+
+  tasks:
+    #- name: "Test for Ubuntu >= 16.x (Xenial); skip some steps if so"
+    #  command: /bin/false
+    #  when:
+    #    ansible_distribution == "Ubuntu" and
+    #    ansible_distribution_version < "16.04"
+    #  ignore_errors: yes
+    #  register: xenial_or_newer
+
+    # This is also done in advance by the 'Vagrantfile', since Ansible seems
+    # to be going haywire lately if you upgrade from 1.5.x to 2.0 midstream.
+    #- name: Add the Ansible PPA (because Ansible 1.5.4 is just too old)
+    #  command: apt-add-repository -y ppa:ansible/ansible
+    #  #when: xenial_or_newer|failed
+
+    # Handled in the task below
+    #- name: Update the Apt cache to avoid 404s on outdated versions
+    #  apt: update_cache=yes
+
+    - name: "Install Apache (and other necessary packages) from the repositories"
+      with_items: "{{ install_these_packages }}"
+      apt: pkg={{ item }} state=latest update_cache=yes
+
+    - name: "Copy .deb files for locally-build packages to guest's /tmp"
+      with_items: "{{ install_these_debs }}"
+      copy: src=files/debs/{{ item }} dest=/tmp
+      
+    - name: Install locally-built packages
+      with_items: "{{ install_these_debs }}"
+      apt: deb=/tmp/{{ item }}
+
+    - name: Remove the copied .deb files
+      with_items: "{{ install_these_debs }}"
+      file: state=absent path=/tmp/{{ item }}
+
+    - name: Create a diversion for 'ack-grep' to just plain 'ack'
+      command: dpkg-divert --local --divert /usr/bin/ack --rename
+               --add /usr/bin/ack-grep creates=/usr/bin/ack
+
+    - name: "Make sure 'vim' is the default editor"
+      command: update-alternatives --set editor /usr/bin/vim.basic
+
+    - name: "Install a few essential Python packages with 'pip'"
+      with_items: "{{ install_these_python_packages }}"
+      pip: name={{ item }}
+
+# vim: sw=2 ts=2 expandtab

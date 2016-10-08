@@ -1,0 +1,25 @@
+---
+- hosts: all
+
+  tasks:
+    - name: Check to make sure ~/devel exists
+      file:
+        path: "{{ home }}/devel"
+        state: directory
+
+    - name: Check to see if '{{ vm_repo }}' is already cloned 
+      git:
+        repo: "{{ origin }}/{{ vm_repo }}"
+        dest: "{{ home }}/devel/{{ vm_repo }}"
+        accept_hostkey: yes
+        update: no
+      ignore_errors: true
+      register: have_vm_repo
+
+    - name: Clone '{{ vm_repo }}' repository if necessary
+      when: have_vm_repo "{{ origin }}/{{ vm_repo }}"
+        dest: "{{ home }}/devel/{{ vm_repo }}"
+        key_file: "{{ home }}/.ssh/{{ vm_repo_deploy_key }}"
+        accept_hostkey: yes
+
+# vim: sw=2 ts=2 expandtab

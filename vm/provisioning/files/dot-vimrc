@@ -1,0 +1,85 @@
+set bg=dark
+set sw=4 ts=4 expandtab
+set modeline
+set number
+
+execute pathogen#infect()
+syntax on
+filetype plugin indent on
+
+" This colorscheme is managed by Pathogen, so it must be below pathogen#infect()
+colorscheme wombat256mod
+set background+= cursorline
+
+" Set sensible shiftwidths/tabstops for different file types
+" Source: http://stackoverflow.com/a/6012850
+" See also: http://vim.wikia.com/wiki/Keep_your_vimrc_file_clean
+autocmd FileType html,css,js :setlocal sw=2 ts=2
+au BufRead,BufNewFile *.html*,*.css,*.js,*.twig :setlocal sw=2 ts=2
+
+" See:
+" https://bitbucket.org/ns9tks/vim-fuzzyfinder/issue/12/not-an-editor-command-fufmrufile
+let g:fuf_modesDisable = []
+
+" Source: https://github.com/plasticboy/vim-markdown#options
+let g:vim_markdown_folding_disabled = 1
+
+" Go to the working directory of the currently open buffer:
+nmap ,go :cd <C-R>=substitute(expand("%:p:h"), ' ', '\\ ', "g")<CR><CR>
+
+" Diff recovered swapfile with saved version:
+" see http://vimdoc.sourceforge.net/htmldoc/diff.html#:DiffOrig
+" and http://stackoverflow.com/questions/63104/smarter-vim-recovery
+command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
+
+" From http://techspeak.plainlystated.com/2009/05/vim-statusline.html
+set statusline=
+set statusline+=%<\                       " cut at start
+set statusline+=%2*[%n%H%M%R%W]%*\        " buffer number, and flags
+set statusline+=%-40f\                    " relative path
+set statusline+=%=                        " separate between right- and left-aligned
+set statusline+=%1*%y%*%*\                " file type
+set statusline+=%14(\|%c\ (\-%l/%L)%)\    " column, line/total lines
+set statusline+=%P                        " percentage of fil
+set laststatus=2                          " always show the status line
+
+" ==================== Custom Mappings =========================
+"let mapleader=","
+nmap <leader>w gq}
+nnoremap <silent> <F2> :FufBuffer<CR>
+nnoremap <silent> <F3> :FufMruFile<CR>
+nnoremap <silent> <F4> :FufDir<CR>
+nnoremap <silent> <F5> :FufFile<CR>
+nnoremap <silent> <F6> :FufBuffer<CR>
+nnoremap <silent>  :NERDTreeToggle
+nnoremap <F7> :TagbarToggle<CR>
+nnoremap <F8> :TagbarToggle<CR>
+nnoremap <silent> <F9> :NERDTreeToggle<CR>
+" Folding and unfolding
+map <leader>f :set foldmethod=indent<cr>zM<cr>
+map <leader>F :set foldmethod=manual<cr>zR<cr>
+
+" Amir Salihefendic's Ultimate Vim Configuration
+" http://amix.dk/vim/vimrc.html
+" ------------------------------------------------------------
+" Useful mappings for managing tabs
+map <leader>tn :tabnew<cr>
+map <leader>to :tabonly<cr>
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove
+" Opens a new tab with the current buffer's path
+" Super useful when editing files in the same directory
+map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
+" ------------------------------------------------------------
+
+" Source: https://github.com/moll/vim-bbye
+nnoremap <Leader>q :Bdelete<CR>
+
+" Drop the selected word (try "viw") into a search-and-replace:
+" See http://www.rayninfo.co.uk/vimtips.html
+vmap <leader>s :<C-U>%s/<c-r>*/
+" That doesn't do what it says (uses clipboard contents, and /only/ in visual
+" mode, so not useful). However, from http://www.rayninfo.co.uk/vimtips.html:
+" pulling objects onto command/search line (SUPER)
+" <C-R><C-W> : pull word under the cursor into a command line or search
+" <C-R><C-A> : pull WORD under the cursor into a command line or search

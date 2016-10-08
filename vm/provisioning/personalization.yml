@@ -1,0 +1,59 @@
+---
+- hosts: all
+
+  vars_prompt:
+    - name: "git_name"
+      prompt: "What is your full name? (used to identify your Git commits)"
+      private: no
+    - name: "git_email"
+      prompt: "What is your email address? (also for Git commits)"
+      private: no
+    - name: "privkey_pass"
+      #prompt: "Login and SSH private key password? (not displayed)"
+      prompt: "SSH private key password? (not displayed)"
+      private: yes
+    - name: "privkey_confirm"
+      prompt: "(again for confirmation)"
+      private: yes
+
+  tasks:
+
+    - name: Check to see if passwords match
+      fail: msg="Your passwords didn't match. Please run this script again."
+      when: privkey_pass != privkey_confirm
+
+    - name: "Verify a minimum password length so 'ssh-keygen' doesn't fail"
+      fail: msg="Your password was too short (<4 bytes). Try again."
+      when: privkey_pass|length < 4
+
+    - name: Add user name to .gitconfig
+      ini_file:
+        dest: "{{ home }}/.gitconfig"
+        backup: yes
+        section: user
+        option: name
+        value: "{{ git_name }}"
+
+    - name: Add user email to .gitconfig
+      ini_file:
+        dest: "{{ home }}/.gitconfig"
+        backup: yes
+        section: user
+        option: email
+        value: "{{ git_email }}"
+
+    - name: "Rename existing keys (to avoid 'ssh-keygen' prompts)"
+      with_items: [ '~/.ssh/id_rsa', '~/.ssh/id_rsa.pub' ]
+      shell: "test -f {{ item }} && mv -f {{ item }} {{ item }}.old"
+      ignore_errors: yes
+
+    - name: Replace project deploy key with a new one, just for this user
+      shell: "ssh-keygen -N '{{ privkey_pass }}' -f ~/.ssh/id_rsa"
+
+    # Source: http://www.cyberciti.biz/faq/unix-appleosx-linux-bsd-agent-admitted-failuretosignusingkey/
+    # Would be a good idea, but it tends not to work inside an Ansible play
+    #- name: Force SSH key agent to forget the old identity
+    #  shell: ssh-add
+    #  ignore_errors: yes
+
+# vim: sw=2 ts=2 expandtab

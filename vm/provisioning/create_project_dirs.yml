@@ -1,0 +1,20 @@
+---
+- hosts: all
+  # I find 'become' dreadfully un-descriptive; previously this was 'sudo'
+  become: yes
+
+  tasks:
+
+    - name: Create destination directories for BSNWA web projects
+      with_items: "{{ projects }}"
+      file: path={{ item.dest }} state=directory
+
+    - name: Ensure the target user has permissions to each project dir
+      acl:
+        name: "{{ item.0.dest }}"
+        entry: "{{ item.1 }}:{{ item.2 }}:rwx"
+        state: present
+      with_nested:
+        - "{{ projects }}"
+        - [ 'user', 'default:user' ]
+        - [ '{{ target_user }}', 'www-data' ]

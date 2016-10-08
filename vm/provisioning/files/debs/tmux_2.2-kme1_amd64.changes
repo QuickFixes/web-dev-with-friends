@@ -1,0 +1,31 @@
+Format: 1.8
+Date: Fri, 24 Jun 2016 16:32:40 +0200
+Source: tmux
+Binary: tmux
+Architecture: source amd64
+Version: 2.2-kme1
+Distribution: UNRELEASED
+Urgency: low
+Maintainer: Karl Ferdinand Ebert <kfebert@gmail.com>
+Changed-By: Kevin Ernst <kevin.ernst@informatik.uni-halle.de>
+Description: 
+ tmux       - terminal multiplexer
+Changes: 
+ tmux (2.2-kme1) UNRELEASED; urgency=low
+ .
+   * Build .deb from upstream 2.2 version
+Checksums-Sha1: 
+ 8409042ca9a8c21fec04f6b6cecffb0f94183bbb 1017 tmux_2.2-kme1.dsc
+ 5ed1430bc7ef44c227e64e9401c686573dd0791a 466852 tmux_2.2.orig.tar.gz
+ d9e54208c401a0cb5d1dbd5636a5e2b2e0bbf234 8244 tmux_2.2-kme1.debian.tar.gz
+ 76230717543b3c1cc2dfb90c823d7967712019dc 329604 tmux_2.2-kme1_amd64.deb
+Checksums-Sha256: 
+ fb84c1b685fe22e4bde1adf0b26dbe270136f4deb24ebe467af5446f3e3d6a96 1017 tmux_2.2-kme1.dsc
+ bc28541b64f99929fe8e3ae7a02291263f3c97730781201824c0f05d7c8e19e4 466852 tmux_2.2.orig.tar.gz
+ 586052bb2d19f205d37b8720daa3ea29312316551cfb2e3120ce2ea3d52cfc9c 8244 tmux_2.2-kme1.debian.tar.gz
+ c1bbc6b9197577200adb877f17669743f03301ca465bc8c707946f3744c610d3 329604 tmux_2.2-kme1_amd64.deb
+Files: 
+ 620c80913d2c3a16219e49f888a6cc7a 1017 admin optional tmux_2.2-kme1.dsc
+ bd95ee7205e489c62c616bb7af040099 466852 admin optional tmux_2.2.orig.tar.gz
+ ffd4eca58e34d3389c84d151a9583d08 8244 admin optional tmux_2.2-kme1.debian.tar.gz
+ 34c9eb906e3c6181eb92aab92a2f473d 329604 admin optional tmux_2.2-kme1_amd64.deb

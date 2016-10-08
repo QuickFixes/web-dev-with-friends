@@ -1,0 +1,111 @@
+---
+# Repositories to build the web applications from and their destinations
+origin: git@github.uc.edu:Bioreactor
+vm_repo: bioreactor-vm
+
+# The name of the target user (in a Vagrant environment, it's pretty obvious)
+target_user: vagrant
+
+# The target user's home directory
+home: "/home/{{ target_user }}"
+
+mysql_root_pass: AllYourDatabaseAreBelongToUs
+mysql_slurm_pass: ToEverythingSlurmSlurmSlurm
+
+# A list of sub-projects and where to clone them
+projects:
+  - { repo: 'bioreactor', dest: '/var/www/bioreactor', a2conf: '990-bioreactor.conf' }
+
+# The name of the RSA public/private key pair for deploying the main project
+project_deploy_key: id_rsa-bioreactor-deploy
+
+# The name of the keypair for pulling the VM repository (for provisioning)
+vm_repo_deploy_key: id_rsa-bioreactor-vm-deploy
+
+install_these_packages:
+  - acl      # can't believe this isn't included in the base OS install
+  - apache2
+  - curl
+  - wget
+  - links
+  - mc
+  - unp
+  - tree
+  - nano
+  - pwgen
+  - vim
+  - tmux
+  - ack-grep
+  - multitail
+  - apt-show-versions
+  - python-virtualenv
+  - ipython
+  - build-essential
+  - exuberant-ctags
+  - sqlite3
+  - par
+  - php5
+  - php5-sqlite
+  - liblocal-lib-perl
+  - libmysqlclient-dev
+
+install_these_debs: 
+  - tmux_2.2-kme1_amd64.deb
+
+install_these_python_packages:
+  - invoke
+  - joe
+
+# The 'install_cmd' is run using the 'shell:' task inside each repo *only*
+# if the file named by 'creates' doesn't already exist; for repos that don't
+# require a separate installation step, just set 'creates:' and 'install_cmd:'
+# to something like '/bin/true', which is a hack but it works.
+clone_these_github_repos:
+  # 'autoenv' executes a file called '.env' if it exists upon entering
+  # a directory (by hooking into the 'cd' command)
+  - { user: 'kennethreitz',
+      repo: 'autoenv',
+      creates: '/bin/true',
+      install_cmd: '/bin/true' }
+  - { user: 'erichs',
+      repo: 'composure',
+      creates: '/bin/true',
+      install_cmd: '/bin/true' }
+  - { user: 'clvv',
+      repo: 'fasd',
+      creates: "{{ home }}/local/bin/fasd",
+      install_cmd: "PREFIX={{ home }}/local make install" }
+  # Sack helps quickly open matches found with 'ack'
+  - { user: 'sampson-chen', repo: 'sack',
+      creates: "{{ home }}/bin/sack",
+      install_cmd: 'bash install_sack.sh' }
+
+install_these_vim_plugins:
+  # - tpope/vim-pathogen
+  # Here's a Vim pattern that will replace user/reponame with YAML notation:
+  # :s/- \(.*\)\/\(.*\)/- { user: '\1', repo: '\2' }/
+  - { user: 'tpope',           repo: 'vim-sensible' }
+  - { user: 'tpope',           repo: 'vim-surround' }
+  - { user: 'tpope',           repo: 'vim-git' }
+  - { user: 'tpope',           repo: 'vim-fugitive' }
+  - { user: 'tpope',           repo: 'vim-repeat' }
+  - { user: 'tpope',           repo: 'vim-unimpaired' }
+  - { user: 'tpope',           repo: 'vim-eunuch' }
+  - { user: 'moll',            repo: 'vim-bbye' }
+  - { user: 'gregsexton',      repo: 'MatchTag' }
+  - { user: 'vim-scripts',     repo: 'L9' }
+  - { user: 'vim-scripts',     repo: 'FuzzyFinder' }
+  - { user: 'ctrlpvim',        repo: 'ctrlp.vim' }
+  - { user: 'godlygeek',       repo: 'tabular' }
+  - { user: 'scrooloose',      repo: 'nerdtree' }
+  - { user: 'majutsushi',      repo: 'tagbar' }
+  - { user: 'plasticboy',      repo: 'vim-markdown' }
+  - { user: 'michalbachowski', repo: 'vim-wombat256mod' }
+  # Navigate Vim splits with Ctrl+h/j/k/l, just like the tmux config
+  - { user: 'christoomey',     repo: 'vim-tmux-navigator' }
+  # See http://emmet.io
+  - { user: 'mattn',           repo: 'emmet-vim' }
+  # Directory differ, try :DirDiff <dir1> <dir2>
+  - { user: 'will133',         repo: 'vim-dirdiff' }
+
+# vim: ft=yaml sw=2 ts=2 expandtab

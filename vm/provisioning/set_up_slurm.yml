@@ -1,0 +1,107 @@
+---
+- hosts: all
+  # I find 'become' dreadfully un-descriptive; previously this was 'sudo'
+  become: yes
+
+  tasks:
+    - name: Install necessary MySQL packages
+      with_items: [ 'mysql-server', 'python-mysqldb' ]
+      apt: pkg={{ item }} state=latest
+
+    - name: Start the MySQL service
+      action: service name=mysql state=started
+
+    # Source: https://stackoverflow.com/a/26598887
+    - name: Set (all) MySQL root password(s)
+      mysql_user:
+          name: root
+          host: "{{ item }}"
+          password: "{{ mysql_root_pass }}"
+          login_user: root
+          login_password: "{{ mysql_root_pass }}"
+          check_implicit_admin: yes
+      with_items:
+        - "{{ ansible_hostname }}"
+        - 127.0.0.1
+        - ::1
+        - localhost
+
+    - name: Create .my.cnf for root
+      template: src=templates/dot-my.cnf dest=/root/.my.cnf mode=0600
+
+    - name: Copy .my.cnf for the target user
+      template:
+          src: templates/dot-my.cnf
+          dest: "{{ home }}/.my.cnf"
+          owner: "{{ target_user }}"
+          group: "{{ target_user }}"
+          mode: 0600
+
+    - name: Create SlurmDB table
+      mysql_db: name=slurm state=present
+
+    - name: Create Slurm job completion accounting table
+      mysql_db: name=slurm_jobcomp_db state=present
+
+    - name: "Create SlurmDB user and grant permissions to 'slurm' db"
+      mysql_user:
+        name: slurm
+        host: localhost
+        password: "{{ mysql_slurm_pass }}"
+        priv: slurm.*:ALL,GRANT
+
+    - name: "Grant SlurmDB user permissions to 'slurm_jobcomp_db'"
+      mysql_user:
+        name: slurm
+        host: localhost
+        priv: slurm_jobcomp_db.*:ALL,GRANT
+        update_password: on_create
+        append_privs: yes
+
+    # Prevent apt-get from starting slurmdbd service, because it will fail at
+    # this point, causing the provisioning process to error out
+    # Source: https://serverfault.com/a/681594, and also refer to
+    # https://docs.ansible.com/ansible/YAMLSyntax.html
+    - name: Inhibit Slurm service(s) startup during apt-get installs
+      shell: |
+          /bin/echo -e "#!/bin/sh\nexit 101" > /usr/sbin/policy-rc.d
+          chmod a+x /usr/sbin/policy-rc.d
+
+    - name: Install the Slurm and SlurmDB packages
+      with_items: [ 'slurm-wlm', 'slurmdbd' ]
+      apt: pkg={{ item }} state=latest
+
+    - name: Install slurmd.conf to /etc/slurm-llnl
+      copy:
+        src: "files/slurm-llnl/slurm.conf"
+        dest: "/etc/slurm-llnl/slurm.conf"
+        group: slurm
+        mode: 0644
+      notify:
+        - restart_slurmd
+        - restart_slurmdbd
+        - restart_slurmctld
+
+    - name: Fill in password(s) in slurmdbd.conf and install to /etc/slurm-llnl
+      template:
+        src: "templates/slurm-llnl/slurmdbd.conf"
+        dest: "/etc/slurm-llnl/slurmdbd.conf"
+        group: slurm
+        mode: 0640
+      notify:
+        - restart_slurmd
+        - restart_slurmdbd
+        - restart_slurmctld
+
+    - name: Re-enable service startup during apt-get installs
+      file: path=/usr/sbin/policy-rc.d state=absent
+
+  handlers:
+    - name: restart_slurmd
+      service: name=slurmd state=restarted
+
+    - name: restart_slurmdbd
+      service: name=slurmdbd state=restarted
+
+    - name: restart_slurmctld
+      service: name=slurmctld state=restarted

@@ -1,0 +1,37 @@
+alias rm='rm -i'
+alias mv='mv -i'
+alias cp='cp -i'
+alias ln='ln -i'
+alias tmux='TERM=xterm-256color tmux'
+alias pbcopy='xclip -i -sel clipboard'
+alias pbpaste='xclip -o -sel clipboard'
+
+# List all locations of a file; 'command' is also interesting
+alias whence='type -a'
+
+# Hopefully this doesn't cause problems. Having to remember to 'source' the
+# virtualenv 'activate' script is just obtuse, and I can't bear it anymore.
+alias activate='test -d venv && source venv/bin/activate || source env/bin/activate'
+
+# ISO 8601 dates, with or without the 'd'ash
+alias isod='date +%Y%m%d'
+alias isodd='date +%Y-%m-%d'
+
+# Another way of doing this is to add "scale=4; to the end, and remember to
+# include the closing quote when you invoke the command.
+alias c='bc -l<<<'
+alias bc='bc -l'
+
+# Correct common speling mistakes:
+alias pusdh='pushd'
+alias pu='pushd'
+alias pud='pushd'
+alias po='popd'
+alias pod='popd'
+
+alias cd..='cd ..'
+alias cd...='cd .. && cd ..'
+alias cd....='cd .. && cd .. && cd ..'
+
+# Source: https://serverfault.com/a/76201
+alias folders='find . -maxdepth 1 -type d -print0 | xargs -0 du -sk | sort -rn'
