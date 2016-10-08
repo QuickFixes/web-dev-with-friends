@@ -5,7 +5,7 @@
 
   tasks:
 
-    - name: Create destination directories for BSNWA web projects
+    - name: Create destination directories for web projects
       with_items: "{{ projects }}"
       file: path={{ item.dest }} state=directory
 

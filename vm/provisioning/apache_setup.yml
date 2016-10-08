@@ -18,13 +18,13 @@
       notify: restart_apache2
 
     - name: Copy Apache configs for each web app
-      with_items: "{{ projects }}"
-      copy: src=files/sites-available/{{ item.a2conf }} dest=/etc/apache2/sites-available
+      with_items: "{{ apacheconfs }}"
+      copy: src=files/sites-available/{{ item }} dest=/etc/apache2/sites-available
       notify: restart_apache2
 
     - name: Enable Apache 'site' for each web app
-      with_items: "{{ projects }}"
-      command: a2ensite {{ item.a2conf }}
+      with_items: "{{ apacheconfs }}"
+      command: a2ensite {{ item }}
       notify: restart_apache2
 
     # This shouldn't be necessary, but to avoid problems, disable the default

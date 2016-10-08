@@ -11,9 +11,14 @@ home: "/home/{{ target_user }}"
 
 mysql_root_pass: AllYourDatabaseAreBelongToUs
 
-# A list of sub-projects and where to clone them
+# A list of sub-projects (under same GitHuh/Lab org) and where to clone them
 projects:
-  - { repo: 'qf1-dancemoves', dest: '/var/www/dancemoves', a2conf: '990-dancemoves.conf' }
+  - { repo: 'qf1-dancemoves', dest: '/var/www/dancemoves' }
+
+# A list of Apache configs to copy and enable
+apacheconfs:
+  - '990-dancemoves.conf'
+  - '991-todolist.conf'
 
 # The name of the RSA public/private key pair for deploying the main project
 project_deploy_key: id_rsa-webdev-vm-deploy
