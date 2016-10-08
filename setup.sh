@@ -60,11 +60,11 @@ vagrant up || \
 echo
 echo "Looks like everything was successful, at least as far as this part of"
 echo "the setup goes. If Vagrant bailed out during the provisioning step,"
-echo "you can safely run 'vagrant provision' here to retry."
+echo "you can safely run 'cd vm; vagrant provision' here to retry."
 echo
 echo "Otherwise, you may now use SSH to connect to the running VM on port"
-echo "9922 (simply type 'vagrant ssh' if you're on Linux or Mac OS X) or try"
-echo "http://localhost:9980 to access the VM's web server."
+echo "9922 (simply type 'cd vm; vagrant ssh' if you're on Linux or Mac OS X)"
+echo "or try http://localhost:9980 to access the VM's web server."
 echo
 
 # vim: ts=4 sw=4 tw=78 colorcolumn=78
