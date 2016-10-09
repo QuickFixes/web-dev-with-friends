@@ -1,12 +1,27 @@
 # Full-stack Web Development—with Friends
 
 Learn to build and share a ready-to-rock GNU/Linux virtual machine image with
-your team, including a complete graphical development environment, all
-necessary packages, and a preloaded, running "starter" web application,
-accessible from a browser in the host OS.
+your team, including a complete <strike>graphical</strike> development
+environment, all necessary packages, and a preloaded, running "starter" web
+application, accessible from a browser in the host OS.
 
-For technical details on the VM provisioning setup, please see
-[`vm/TECHNICAL.md`](vm/TECHNICAL.md).
+Once the VM is provisioned running, you can access a sample static web site
+from the "host" OS on [localhost:9980][lh9980] as well as a JavaScript-based
+to-do list application (based on [TodoMVC][todomvc]) on
+[locahost:9981][lh9981].
+
+The former (cloned from [this repo][dancemoves])
+demonstrates how a remote repository may be [cloned using Git][ansiblegit]
+during the Ansible "provisioning" process. The latter demonstrates how you
+might serve web content from the cloned repository _on the host OS_, using
+Vagrant's [`config.vm.synced_folder` directive][vagrantsyncedfolder] (see
+`Vagrantfile` around [line 49][vagrantfilel49]). This allows you to do your
+development work from the host OS, using your favorite editor, or create
+a self-contained and self-hosted repository for showing off your project.
+
+For instructions for accessing the VM over [SSH][wpssh], see the
+"[Authentication](#authentication)" section, below. For technical details on
+the VM provisioning setup, please see [`vm/TECHNICAL.md`](vm/TECHNICAL.md).
 
 ## Installation
 
@@ -19,7 +34,12 @@ Every OS is going to require at a minimum:
 ### Quick start
 
 If you already know how to clone a repository from GitHub, then clone this
-repository (`web-dev-with-friends`) to your computer and follow these steps:
+repository (`web-dev-with-friends`) to your computer and following the steps
+below.
+
+Once all the provisioning steps are completed, you will be able to access one
+of the sample web sites at [localhost:9980][lh9980] or [:9981][lh9981] from the
+"host" operating system.
 
 On **Windows**:
 
@@ -28,6 +48,7 @@ On **Windows**:
    cloned (in Explorer, you can Shift+right click on the directory and pick
    "Open command window here"; [screenshot][cmdhere])
 3. type in `setup.cmd` and press ENTER
+4. visit [localhost:9980][lh9980] in a web browser on the host OS
 
 On **Unix-like operating systems** (macOS / Linux):
 
@@ -35,6 +56,7 @@ On **Unix-like operating systems** (macOS / Linux):
 2. Inside a terminal, `cd` to where you cloned the `web-dev-with-friends`
    repository
 3. run `./setup.sh` to start the installation
+4. visit [localhost:9980][lh9980] in a web browser on the host OS
 
 macOS (the OS formerly known as OS X) and most GNU/Linux distros will already
 have Git install installed. However, if you get an error on Linux when you type
@@ -43,9 +65,10 @@ distro's package manager.
 
 ### Detailed instructions for Windows
 
-In order to work productively with the VM image created by this
-repository, you'll want a "genuine" [Unix shell][shell] that provides the
-OpenSSH `ssh` binary.
+It's sufficient to run `setup.cmd` in Windows' built-in Command Prompt, but in
+order to work most productively with the VM image created by this repository,
+you'll want a "genuine" [Unix shell][shell] that provides the OpenSSH `ssh`
+binary.
 
 _Learning how to use the Unix shell (e.g., Bash) is beyond the scope of this
 workshop, but you can find some resources [here][artofcmdline]._
@@ -63,6 +86,9 @@ Then browse to this repository (`web-dev-with-friends`)
 "Clone or download" button, followed by "Open in Desktop":
 
 ![Cloning a repository from the web with the GitHub GUI](img/github_open_in_desktop.png)
+
+After that, you can right click on the repository in the left panel of the GUI,
+and choose
 
 ### Detailed instructions for macOS (née OS X)
 
@@ -151,6 +177,7 @@ forwarded ports for you.
 | ------------------------------- | ---------------- | ------------------------ |
 | 22                              | 9922             | Secure Shell (see below) |
 | 80                              | [9980][lh9980]   | Apache HTTP server       |
+| 81                              | [9981][lh9981]   | Apache HTTP server       |
 | 5000                            | [55000][lh55000] | Python / Flask app       |
 
 It was after some deliberation that I decided to stick with 55000 for the
@@ -254,9 +281,17 @@ through some data storage disaster.
 [gitcola]: https://git-cola.github.io/index.html
 [yaml]: https://en.m.wikipedia.org/wiki/YAML
 [ansible]: https://docs.ansible.com/
+[ansiblegit]: https://docs.ansible.com/ansible/git_module.html
 [basebox]: https://www.vagrantup.com/docs/boxes/base.html
 [cygwin]: http://cygwin.org/
 [cyberduck]: https://cyberduck.io/
 [vagrantwrong]: img/vagrant_up_in_wrong_directory.png
 [vagrantright]: img/vagrant_up_in_right_directory.png
 [sourcetree]: https://www.sourcetreeapp.com/
+[lh9980]: http://localhost:9980
+[lh9981]: http://localhost:9981
+[lh55000]: http://localhost:55000
+[dancemoves]: https://github.com/QuickFixes/qf1-dancemoves 
+[wpssh]: https://en.m.wikipedia.org/wiki/Secure_Shell
+[vagrantsyncedfolder]: https://www.vagrantup.com/docs/synced-folders/basic_usage.html
+[vagrantfilel49]: vm/Vagrantfile#L49
