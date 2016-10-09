@@ -9,17 +9,29 @@ set BOX_NAME=webdev-jessie
 set VAGRANT_BOX=http://homepages.uc.edu/~ernstki/%BOX_NAME%.box
 
 :: FIXME: Remember starting directory and restore it when script finishes
-cd %0\..\vm
+cd %0\..
 cls
 echo VM IMAGE PREPARATION
 echo --------------------
 echo.
 echo   This script will download and install the '%BOX_NAME%' Vagrant base box
-echo   and run 'vagrant up' for you. 
+echo   and run 'vagrant up' for you.
 echo.
-::read -p "Press ENTER now to continue or CTRL+C to abort... "
+echo   If you didn't already, you'll want to download and install VirtualBox
+echo   and Vagrant for Windows (then reboot and run this script again).
+echo.
+echo     https://www.virtualbox.org/wiki/Downloads
+echo     https://www.vagrantup.com/downloads.html
+echo.
+echo   You can press CTRL+C now if you changed your mind already.
+echo.
 pause
 echo.
+
+:: If 'vagrant' isn't in the path, bail out now
+:: (refer to: http://stackoverflow.com/a/19777616)
+vagrant >nul 2>&1
+if %ERRORLEVEL% equ 9009 call :Error "locating 'vagrant' in your path"
 
 :: Check to see if the box already exists in the user's Vagrant setup
 vagrant box list 2>&1 | findstr %BOX_NAME% >nul 2>&1
@@ -40,7 +52,7 @@ echo Looks like everything was successful, at least as far as this part of
 echo the setup goes. If Vagrant bailed out during the provisioning step, you
 echo can safely run 'vagrant provision' here to retry.
 echo.
-echo Othersiwe, you may now use SSH to connect to the running VM on port 9922,
+echo Otherwise, you may now use SSH to connect to the running VM on port 9922,
 echo or try http://localhost:9980 to access the web server running on the VM.
 echo.
 goto :EOF

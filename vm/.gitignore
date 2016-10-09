@@ -1,8 +1,0 @@
-# backups and Vim swapfiles
-*.sw?
-*~
-.DS_Store
-.vagrant
-*.retry
-# the veewee ISO directory
-iso/

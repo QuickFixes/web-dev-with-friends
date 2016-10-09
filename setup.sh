@@ -28,7 +28,7 @@ croak() {
 # Change into the directory where this script lives, in case it was run from
 # a relative pathname (or a pathname starting from '/'):
 trap 'quietly popd' 0 1 2 15
-quietly pushd "$MYDIR/vm"
+quietly pushd "$MYDIR"
 
 clear
 echo "VM IMAGE PREPARATION"
@@ -38,6 +38,12 @@ echo "  This script will download and install the '$BOX_NAME' Vagrant base box"
 echo "  and run 'vagrant up' for you. It honestly doesn't save you a whole lot"
 echo "  of typing, but at least you don't have to look up the URL for the base"
 echo "  box."
+echo 
+echo "  If you didn't already, you'll want to download and install VirtualBox"
+echo "  and Vagrant for your OS before continuing."
+echo
+echo "    https://www.virtualbox.org/wiki/Downloads"
+echo "    https://www.vagrantup.com/downloads.html"
 echo
 read -p "Press ENTER now to continue or CTRL+C to abort... "
 echo
@@ -60,10 +66,10 @@ vagrant up || \
 echo
 echo "Looks like everything was successful, at least as far as this part of"
 echo "the setup goes. If Vagrant bailed out during the provisioning step,"
-echo "you can safely run 'cd vm; vagrant provision' here to retry."
+echo "you can safely run 'vagrant provision' here to retry."
 echo
 echo "Otherwise, you may now use SSH to connect to the running VM on port"
-echo "9922 (simply type 'cd vm; vagrant ssh' if you're on Linux or Mac OS X)"
+echo "9922 (simply type 'vagrant ssh' if you're on Linux or Mac OS X)"
 echo "or try http://localhost:9980 to access the VM's web server."
 echo
 

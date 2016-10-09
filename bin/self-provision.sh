@@ -74,7 +74,7 @@ echo ' '
 echo "On Linux, OS X, or Windows with a good working Bash shell (e.g.,"
 echo "Git-Bash) you should be able to type"
 echo ' '
-echo "    cd vm; vagrant ssh"
+echo "    vagrant ssh"
 echo ' '
 echo "to connect to the running VM right now."
 echo ' '

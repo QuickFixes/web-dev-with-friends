@@ -21,7 +21,7 @@ a self-contained and self-hosted repository for showing off your project.
 
 For instructions for accessing the VM over [SSH][wpssh], see the
 "[Authentication](#authentication)" section, below. For technical details on
-the VM provisioning setup, please see [`vm/TECHNICAL.md`](vm/TECHNICAL.md).
+the VM provisioning setup, please see [`TECHNICAL.md`](TECHNICAL.md).
 
 ## Installation
 
@@ -142,35 +142,36 @@ with no password.
 The Vagrant user's default password is `vagrant`.
 
 If you have any problems with authentication, please refer to 
-[`vm/TECHNICAL.md`](vm/TECHNICAL.md).
+[`TECHNICAL.md`](TECHNICAL.md).
 
 ### Connecting to the VM over SSH
 
 In order to connect with the VM over SSH, normally you would just type
-`vagrant ssh` inside the `vm` subdirectory of this repository, wherever you
-originally cloned this repository.
+`vagrant ssh` inside the "root" of this repository, wherever you originally
+cloned it.
 
 An error message to the effect of "Run \`vagrant init\` to create a new
-Vagrant environment"
-
-![You forgot to `cd vm` first.][vagrantwrong]
-
-means that you forgot to `cd vm` before running `vagrant up` or `vagrant ssh`.
-The `vagrant` command expects to be run in the same working directory as where
-the [`Vagrantfile`](vm/Vagrantfile) lives.
+Vagrant environment" usually means that you were in a subdirectory and forgot
+to `cd` into the top level of the repository (where the
+[`Vagrantfile`](Vagrantfile) lives) before running `vagrant up` or `vagrant
+ssh`.
 
 ![That's better.][vagrantright]
+
+The `vagrant` command expects to be run in the same working directory as where
+the [`Vagrantfile`](Vagrantfile) lives, so that it can read the
+configuration directives for the VM before attempting to start/provision it.
 
 On Windows, you need to run this command inside of a Bash (or [Cygwin][])
 shell, which the GitHub GUI for Windows provides, as long as you correctly
 followed the instructions above.
 
 You'll find additional advice about connecting over SSH (including using SFTP
-programs like [Cyberduck][]) in [`vm/TECHNICAL.md`](vm/TECHNICAL.md).
+programs like [Cyberduck][]) in [`TECHNICAL.md`](TECHNICAL.md).
 
 ### Forwarded ports
 
-The [`Vagrantfile`](vm/Vagrantfile) will automatically create the following
+The [`Vagrantfile`](Vagrantfile) will automatically create the following
 forwarded ports for you. 
 
 | Guest (VM) port forwards to...  | Host port #      | Notes                    |
@@ -249,7 +250,7 @@ your life getting _just_ right) became corrupted, or > was otherwise lost
 through some data storage disaster.
 >
 > There is no requirement for anyone on your team to perform the steps
-> discussed in [`vm/TECHNICAL.md`](vm/TECHNICAL.md) to rebuild the base box,
+> discussed in [`TECHNICAL.md`](TECHNICAL.md) to rebuild the base box,
 > but it saves *you* time when you make a clone of this repository for your
 > _next_ project.
 >
@@ -294,4 +295,4 @@ through some data storage disaster.
 [dancemoves]: https://github.com/QuickFixes/qf1-dancemoves 
 [wpssh]: https://en.m.wikipedia.org/wiki/Secure_Shell
 [vagrantsyncedfolder]: https://www.vagrantup.com/docs/synced-folders/basic_usage.html
-[vagrantfilel49]: vm/Vagrantfile#L49
+[vagrantfilel49]: Vagrantfile#L49
