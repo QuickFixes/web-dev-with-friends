@@ -23,28 +23,23 @@ repository (`web-dev-with-friends`) to your computer and follow these steps:
 
 On **Windows**:
 
-1. Open a command prompt in the `web-dev-with-friends` directory (in Explorer,
-   you can Shift+right click on the directory and pick "Open command window
-   here"; [screenshot][cmdhere])
-2. type in `setup.cmd` and press ENTER
+1. Install (at a minimum) VirtualBox and Vagrant, as noted above
+2. Open a command prompt inside the `web-dev-with-friends` respository you just
+   cloned (in Explorer, you can Shift+right click on the directory and pick
+   "Open command window here"; [screenshot][cmdhere])
+3. type in `setup.cmd` and press ENTER
 
 On **Unix-like operating systems** (macOS / Linux):
 
-macOS (née OS X) and most GNU/Linux distros will already have the tools you
-need installed. If you get an error on Linux when you type `git` at the
-command line, then install `git` (possibly `git-core`) from the distro's
-package manager.
+1. Install (at a minimum) VirtualBox and Vagrant, as noted above
+2. Inside a terminal, `cd` to where you cloned the `web-dev-with-friends`
+   repository
+3. run `./setup.sh` to start the installation
 
-Then, paste these commands into a terminal (replacing the
-`/path/to/your/dev/stuff` as applicable):
-
-    cd ~/path/to/your/dev/stuff
-    git clone git@github.com:QuickFixes/web-dev-with-friends.git
-    cd web-dev-with-friends
-    ./setup.sh
-
-Replace `git@github.com` with `git@github.uc.edu` if you are a UC student and
-don't have a GitHub(.com) account.
+macOS (the OS formerly known as OS X) and most GNU/Linux distros will already
+have Git install installed. However, if you get an error on Linux when you type
+`git` at the command line, then install `git` (possibly `git-core`) from the
+distro's package manager.
 
 ### Detailed instructions for Windows
 
@@ -76,19 +71,38 @@ already have all the software you need to clone the repository from the
 command line. Search using Spotlight (⌘ + space) for "terminal" if you
 don't know where Terminal.app is found.
 
-Vagrant and VirtualBox are, however, still required on a Mac; see above.
-
 You might still prefer starting with the [GitHub GUI for Mac][ghguimac], and
 that's fine. If you use the GitHub GUI on Mac, you can follow the same basic
 steps as for Windows, above, to clone the `web-dev-with-friends` repo from the
 web. You don't need to configure the "Git Bash" shell, because macOS is a Unix
 operating system, and already comes with the Bash shell.
 
+Installation packages for Vagrant and VirtualBox are, however, still required
+on a Mac; see above for links to the main project sites.
+
 ### Detailed instructions for GNU/Linux
 
 On GNU/Linux, you'll want to _at a minimum_ install the `git-core` or `git`
 [package] from your OS's package manager. [`git-cola`][gitcola] or `gitg`
 would be good choices if you'd like a GUI.
+
+Then, just paste these commands
+
+    cd ~/path/to/your/dev/stuff
+    git clone git@github.com:QuickFixes/web-dev-with-friends.git
+    cd web-dev-with-friends
+    ./setup.sh
+
+into a terminal, replacing `git@github.com` with `git@github.uc.edu` if you are
+a UC student and don't have a GitHub.com account (since this repository exists
+in both places).
+
+Precompiled packages for both Vagrant and VirtualBox should exist in some form
+in the "contrib" or "universe" repositories of your Linux distribution. As of
+this writing, however, it's best to use the installation instructions on the
+[main project site][vagrant] (installing with `pip`), because you'll run into
+problems with some of the older versions. (Give them a few years to sort out
+these kinks, it's a relatively young project.)
 
 ## Connecting to the running VM
 
