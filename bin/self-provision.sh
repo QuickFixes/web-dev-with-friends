@@ -82,8 +82,7 @@ echo "In order to be able to push new commits to the 'origin' repositories"
 echo "for the $PROJECT_NAME project(s), and to identify yourself to Git (for"
 echo "tracking your contributions in the commit history), you'll want to run"
 echo ' '
-echo "    cd ~/devel/$VM_REPO_NAME"
-echo "    bin/personalize.sh"
+echo "    /vagrant/bin/personalize.sh"
 echo ' '
 echo "right after logging in as the 'vagrant' user."
 echo ' '

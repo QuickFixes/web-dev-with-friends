@@ -16,7 +16,10 @@ Vagrant.configure(2) do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "webdev-jessie"
-  config.vm.define :debian_jessie
+  # Setting the machine name (what Vagrant calls this box, once it's set up)
+  # is kinda confusing; see http://stackoverflow.com/q/17845637 for some
+  # discussion
+  config.vm.define :webdev_jessie
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -66,38 +69,29 @@ Vagrant.configure(2) do |config|
     #vb.customize ["modifyvm", :id, "--vram", "32"]
   end
 
-  # Provision from within the VM itself by copying the GitLab deploy key pair
-  # to the guest (fixing permissions on the private key), then cloning the
-  # GitLab repo and running the 'self-provision.sh' script on the VM.
-  files = {
-    # This seems somewhat fruitless because of the new hashed host keys
-    'provisioning/files/origin_host_keys'            => '~/.ssh/known_hosts',
-    'provisioning/files/id_rsa-webdev-vm-deploy'     => '~/.ssh/id_rsa',
-    'provisioning/files/id_rsa-webdev-vm-deploy.pub' => '~/.ssh/id_rsa.pub'
-  }
-  files.each { |s,d| config.vm.provision "file", source: s, destination: d }
-
+  # Provision from within the VM itself by running the 'self-provision.sh'
+  # script from inside the '/vagrant' synced folder (which points to the
+  # cloned repository on the host OS filesystem)
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
-    # OpenSSH gets (rightfully) upset if everyone can read your private key,
-    # and in fact the 'git clone' will fail as a result unless you are
-    # running a key agent on the host OS, and that public key has already
-    # been added to your GitHub profile.
-    chmod 0600 ~/.ssh/id_rsa
-    cd ~vagrant
-    test -d devel || mkdir devel && cd devel
+    echo "==>  Running provisioning playbooks with Ansible  <=="
 
-    # Check if the repo for the VM configuration (where this Vagrantfile comes
-    # from) already exists *on* the VM; clone it if not.
-    if [ ! -d #$REPO_NAME ]; then
-        git clone -q #$ORIGIN/#$REPO_NAME || exit $?
-        cd #$REPO_NAME
-    else
-        cd #$REPO_NAME
-        git pull --quiet || exit $?
+    # Check to make sure that Vagrant mounted this repo as a synced folder (the
+    # default behavior, so it should be fine for a working VirtualBox
+    # installation)
+    if [ ! -d /vagrant/bin ]; then
+        echo
+        echo "ACK! There's a problem with the /vagrant synced folder" >&2
+        echo "     Check VirtualBox's "Shared Folders" settings and run" >&2
+        echo
+        echo "         vagrant provision"
+        echo
+        echo "     from the command line on the host OS to try again."
+        echo
+        exit 1
     fi
 
-    echo "==> Running provisioning playbooks with Ansible <=="
-    bin/self-provision.sh
+    # And run the self-provisioning script from the synced folder
+    /vagrant/bin/self-provision.sh
   SHELL
 
 end
