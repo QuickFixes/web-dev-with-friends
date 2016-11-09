@@ -90,9 +90,13 @@ Then browse to this repository (`web-dev-with-friends`)
 After that, you can right click on the repository in the left panel of the
 GitHub GUI, and choose "Open in Git Shell." This gets you a real Unix-type
 shell, and at that point you can basically follow any of the Unixy instructions
-above. If you do any Git commands, though (say, `git pull`), you'll have to
-input your GitHub credentials, which is bad for lazy people, so it might help
-to study up on SSH public-key authentication and `ssh-agent`
+above.
+
+![Opening a Bash shell in GitHub for Windows](img/git_shell.jpg)
+
+If you do any Git commands in this shell though (say, `git pull`), you'll have
+to input your GitHub credentials, which is bad for lazy people, so it might
+help to study up on SSH public-key authentication and `ssh-agent`
 ([guide][sshagent]).
 
 ### Detailed instructions for macOS (née OS X)
