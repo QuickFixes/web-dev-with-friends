@@ -87,8 +87,13 @@ Then browse to this repository (`web-dev-with-friends`)
 
 ![Cloning a repository from the web with the GitHub GUI](img/github_open_in_desktop.png)
 
-After that, you can right click on the repository in the left panel of the GUI,
-and choose
+After that, you can right click on the repository in the left panel of the
+GitHub GUI, and choose "Open in Git Shell." This gets you a real Unix-type
+shell, and at that point you can basically follow any of the Unixy instructions
+above. If you do any Git commands, though (say, `git pull`), you'll have to
+input your GitHub credentials, which is bad for lazy people, so it might help
+to study up on SSH public-key authentication and `ssh-agent`
+([guide][sshagent]).
 
 ### Detailed instructions for macOS (née OS X)
 
@@ -150,24 +155,36 @@ In order to connect with the VM over SSH, normally you would just type
 `vagrant ssh` inside the "root" of this repository, wherever you originally
 cloned it.
 
-An error message to the effect of "Run \`vagrant init\` to create a new
-Vagrant environment" usually means that you were in a subdirectory and forgot
-to `cd` into the top level of the repository (where the
+You'll find additional advice about connecting over SSH (including using SFTP
+programs like [Cyberduck][]) in [`TECHNICAL.md`](TECHNICAL.md).
+
+#### I got an error when I did `vagrant ssh`
+
+Oh, you did? Well, an error message to the effect of "Run \`vagrant init\` to
+create a new Vagrant environment" usually means that you were in a subdirectory
+and forgot to `cd` into the top level of the repository (where the
 [`Vagrantfile`](Vagrantfile) lives) before running `vagrant up` or `vagrant
 ssh`.
 
-![That's better.][vagrantright]
+![What happens when you `vagrant` in the wrong directory](img/vagrant_up_in_wrong_directory.png)
 
 The `vagrant` command expects to be run in the same working directory as where
 the [`Vagrantfile`](Vagrantfile) lives, so that it can read the
-configuration directives for the VM before attempting to start/provision it.
+configuration directives for the VM before attempting to
+start/provision/connect to it.
 
-On Windows, you need to run this command inside of a Bash (or [Cygwin][])
-shell, which the GitHub GUI for Windows provides, as long as you correctly
-followed the instructions above.
+#### On Windows
 
-You'll find additional advice about connecting over SSH (including using SFTP
-programs like [Cyberduck][]) in [`TECHNICAL.md`](TECHNICAL.md).
+Out of the box, Windows lacks the OpenSSH `ssh` binary which Vagrant expects to
+find in your `PATH` when you `vagrant ssh`, so you would need to run this
+command inside of a Bash (or [Cygwin][]) shell, which the GitHub GUI for
+Windows provides. (Provided you correctly followed the instructions above.)
+
+You can always use [PuTTY][] and just connect to localhost port 9922,
+but then you have to type a username and password ("vagrant" for both), which
+is bad for lazy people. Setting up PuTTY profile to auto-type the username and
+use Vagrant's private key is an option, but beyond the scope of these
+instructions.
 
 ### Forwarded ports
 
@@ -176,16 +193,16 @@ forwarded ports for you.
 
 | Guest (VM) port forwards to...  | Host port #      | Notes                    |
 | ------------------------------- | ---------------- | ------------------------ |
-| 22                              | 9922             | Secure Shell (see below) |
+| 22                              | 9922             | Secure Shell (see above) |
 | 80                              | [9980][lh9980]   | Apache HTTP server       |
 | 81                              | [9981][lh9981]   | Apache HTTP server       |
 | 5000                            | [55000][lh55000] | Python / Flask app       |
 
-It was after some deliberation that I decided to stick with 55000 for the
-Flask server, so that it wouldn't interfere with the default configuration of
-a local Flask server you might be experimenting with. Just make a bookmark to
-<http://localhost:55000> and remember that it goes with the Flask app running
-on the VM.
+It was after some deliberation that I decided to stick with 55000 for a [Flask][]
+server (not included in this repo), so that it wouldn't interfere with the
+default configuration of a local Flask server you might be experimenting with.
+Just make a bookmark to <http://localhost:55000> and remember that it goes with
+the Flask app running on the VM.
 
 ## Frequently-asked Questions
 
@@ -200,12 +217,12 @@ on the VM.
 > the tools necessary to do "full-stack" web development using open source
 > technologies, you need a mishmash of software to fill in the gaps.
 
-> Graphical Git clients such as the official GitHub GUI and [SourceTree][]
-> help alleviate some of the pain of setting this all up, by bundling a
-> functional Unix shell. The virtual machine you'll get after running the
-> setup script in this repository is designed to provide everything you need
-> to get _started_ with PHP or Python web development on the Apache HTTP
-> server.
+> Graphical Git clients such as the official [GitHub GUI][ghguiwin]
+> ([Mac version][ghguimac]) and [SourceTree][] help alleviate some of the pain
+> of setting this all up, by bundling a functional Unix shell. The virtual
+> machine you'll get after running the setup script in this repository is
+> designed to provide everything you need to get _started_ with PHP or Python
+> web development on the Apache HTTP server.
 
 ### What is this "Vagrant" thing and why is it necessary? ###
 
@@ -241,13 +258,14 @@ on the VM.
 
 > It's not.
 >
-> But it provides you with a complete blueprint of how to set up a virtual
-> machine development environment for your team—beginning from the distro's
-> installation ISO.
+> But it provides you with a complete blueprint of how to set up the "base
+> box" for a virtual machine development environment for your team—beginning
+> from the distro's installation ISO. Which you can then check into version
+> control.
 >
-> This could come in handy if the Vagrant `.box` image (that you spent hours of
-your life getting _just_ right) became corrupted, or > was otherwise lost
-through some data storage disaster.
+> This could come in handy if the Vagrant `.box` image (that you spent hours
+> of your life getting _just_ right) became corrupted, or was otherwise lost
+> through some data storage disaster.
 >
 > There is no requirement for anyone on your team to perform the steps
 > discussed in [`TECHNICAL.md`](TECHNICAL.md) to rebuild the base box,
@@ -296,3 +314,6 @@ through some data storage disaster.
 [wpssh]: https://en.m.wikipedia.org/wiki/Secure_Shell
 [vagrantsyncedfolder]: https://www.vagrantup.com/docs/synced-folders/basic_usage.html
 [vagrantfilel49]: Vagrantfile#L49
+[flask]: http://flask.pocoo.org/
+[putty]: http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html
+[sshagent]: http://mah.everybody.org/docs/ssh
