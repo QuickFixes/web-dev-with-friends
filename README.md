@@ -37,9 +37,11 @@ If you already know how to clone a repository from GitHub, then clone this
 repository (`web-dev-with-friends`) to your computer and following the steps
 below.
 
-Once all the provisioning steps are completed, you will be able to access one
-of the sample web sites at [localhost:9980][lh9980] or [:9981][lh9981] from the
-"host" operating system.
+Once the [base VM image][basebox] is downloaded and all the
+[provisioning steps](img/vagrant_provisioning.png) are completed (takes less
+than ten minutes on campus wifi), you will be able to access one of the sample
+web sites at [localhost:9980][lh9980] or [:9981][lh9981] from the "host"
+operating system.
 
 On **Windows**:
 
@@ -297,6 +299,7 @@ the Flask app running on the VM.
 [todovanilla]: http://todomvc.com/examples/vanillajs/
 [todomvc]: https://github.com/tastejs/todomvc  
 [todomvcrev]: https://github.com/tastejs/todomvc/commit/635fd9f79d9c12d731a968cd35a535e25c2f4e71
+[basebox]: http://homepages.uc.edu/~ernstki/webdev-jessie.box
 [cmdhere]: http://mingersoft.com/blog/2011/02/open-a-command-prompt-quickly-in-windows-7/
 [shell]: https://en.m.wikipedia.org/wiki/Unix_shell
 [artofcmdline]: https://github.com/jlevy/the-art-of-command-line
@@ -308,8 +311,6 @@ the Flask app running on the VM.
 [basebox]: https://www.vagrantup.com/docs/boxes/base.html
 [cygwin]: http://cygwin.org/
 [cyberduck]: https://cyberduck.io/
-[vagrantwrong]: img/vagrant_up_in_wrong_directory.png
-[vagrantright]: img/vagrant_up_in_right_directory.png
 [sourcetree]: https://www.sourcetreeapp.com/
 [lh9980]: http://localhost:9980
 [lh9981]: http://localhost:9981
