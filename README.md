@@ -50,6 +50,10 @@ On **Windows**:
    cloned (in Explorer, you can Shift+right click on the directory and pick
    "Open command window here"; [screenshot][cmdhere])
 3. type in `setup.cmd` and press ENTER
+    * _if you get the error "Vagrant could not detect VirtualBox!" as described
+      in [this issue][vagrant192], try adding the path to `VBoxManage.exe`
+      (probably `C:\Program Files\Oracle\VirtualBox`) to your `%PATH%`
+      ([how-to][winpath])_
 4. visit [localhost:9980][lh9980] in a web browser on the host OS
 
 On **Unix-like operating systems** (macOS / Linux):
@@ -205,12 +209,38 @@ forwarded ports for you.
 | 5000                            | [55000][lh55000] | Python / Flask app       |
 
 It was after some deliberation that I decided to stick with 55000 for a [Flask][]
-server (not included in this repo), so that it wouldn't interfere with the
-default configuration of a local Flask server you might be experimenting with.
-Just make a bookmark to <http://localhost:55000> and remember that it goes with
-the Flask app running on the VM.
+server (not included in this repo, but try [this][flasktest]), so that it
+wouldn't interfere with the default configuration of a local Flask server you
+might be experimenting with.  Just make a bookmark to <http://localhost:55000>
+and remember that it goes with the Flask app running on the VM.
 
 ## Frequently-asked Questions
+
+### Do I really need any of this? ###
+
+> Probably not, unless you have a specific need to share a standardized
+> GNU/Linux development / server environment with a team of people, with the
+> entirety of the VM's configuration stored in version control.
+
+> If you've never done it before, you could actually learn a lot just doing it
+> the "manual" way: downloading the installation ISO for a GNU/Linux
+> distribution and installing it in a new VM
+> (here's a [how-to for Ubuntu][vboxvmhowto]).
+
+> You don't need to clone this repository to do that, and you certainly don't
+> need (or want) Vagrant getting in the way if you're trying to learn how to
+> create a Linux VM from scratch. [Vagrant][] is an advanced tool, and
+> [Ansible][] is an even more advanced tool. You might need them someday, but
+> maybe that day isn't here yet.
+
+> That said, what the contents of this repository _do_ give you is a
+> fully-configured Debian Jessie VM with a working Apache server, a good
+> [Vim][] development environment with lots of fancy [plugins][vimplugins],
+> and a couple of sample web applications, all spun up on demand from a set of
+> well-commented "recipes" (_e.g._, the `Vagrantfile` and the contents of the
+> `provisioning` subdirectory) which you can use as the basis for your _own_
+> team project.
+
 
 ### What about Windows? ###
 
@@ -278,10 +308,10 @@ the Flask app running on the VM.
 > but it saves *you* time when you make a clone of this repository for your
 > _next_ project.
 >
-> Keep in mind, too, that this repository is a few hundred kilobytes. If your
-> team is patient and doesn't mind downloading a 4.7 GB installation ISO, you
-> actually don't even have to host the [Vagrant "base box"][basebox] anywhere
-> on the 'net.
+> Keep in mind, too, that this repository is a just a few hundred kilobytes
+> (if you don't count the slides). If your team is patient and doesn't mind
+> downloading a 4.7 GB installation ISO, you actually don't even have to host
+> the [Vagrant "base box"][basebox] anywhere on the 'net.
 
 ## References
 
@@ -322,3 +352,9 @@ the Flask app running on the VM.
 [flask]: http://flask.pocoo.org/
 [putty]: http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html
 [sshagent]: http://mah.everybody.org/docs/ssh
+[vagrant192]: https://github.com/ptwobrussell/Mining-the-Social-Web-2nd-Edition/issues/192
+[winpath]: http://www.computerhope.com/issues/ch000549.htm
+[vboxvmhowto]: http://askubuntu.com/a/153098
+[flasktest]: https://github.com/ernstki/test-flask-app
+[vim]: http://vim.wikia.com/wiki/Tutorial
+[vimplugins]: provisioning/group_vars/all#L87
